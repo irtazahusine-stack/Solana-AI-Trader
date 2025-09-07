@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Solana AI Trader - Smart Trading Insights</title>
+    <link rel="stylesheet" href="chart-style.css?v=2">
+    <link rel="stylesheet" href="theme.css?v=1">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="header-top">
+                <h1>🚀 Solana AI Trader</h1>
+                <button class="theme-toggle" id="themeToggle" title="Toggle Dark/Light Mode">
+                    <span class="theme-icon">🌙</span>
+                </button>
+            </div>
+            <p class="tagline">AI-Powered Trading Insights for Solana Tokens</p>
+            <div class="connection-status" id="connectionStatus">
+                <span class="status-indicator"></span>
+                <span class="status-text">Connecting...</span>
+            </div>
+        </header>
+
+        <nav class="main-nav">
+            <button class="nav-btn active" data-view="dashboard">Dashboard</button>
+            <button class="nav-btn" data-view="analysis">AI Analysis</button>
+            <button class="nav-btn" data-view="signals">Trading Signals</button>
+            <button class="nav-btn" data-view="trending">Trending</button>
+        </nav>
+
+        <!-- Dashboard View -->
+        <section id="dashboard" class="view active">
+            <div class="market-overview">
+                <h2>Market Overview</h2>
+                <div class="stats-grid" id="marketStats">
+                    <!-- Market stats will be populated here -->
+                </div>
+            </div>
+
+            <div class="price-chart-container">
+                <h2>Price Chart</h2>
+                <select id="tokenSelect" class="token-select">
+                    <option value="SOL">Solana (SOL)</option>
+                    <option value="USDC">USD Coin (USDC)</option>
+                    <option value="RAY">Raydium (RAY)</option>
+                    <option value="BONK">Bonk (BONK)</option>
+                </select>
+                <canvas id="priceChart"></canvas>
+            </div>
+
+            <div class="token-grid" id="tokenGrid">
+                <!-- Token cards will be populated here -->
+            </div>
+            
+            <!-- Additional Charts Grid -->
+            <div class="charts-grid">
+                <div class="chart-section">
+                    <h3>Trend Analysis</h3>
+                    <canvas id="trendChart"></canvas>
+                </div>
+                
+                <div class="chart-section">
+                    <h3>Signal Distribution</h3>
+                    <canvas id="signalChart"></canvas>
+                </div>
+                
+                <div class="chart-section">
+                    <h3>Market Correlation</h3>
+                    <canvas id="correlationChart"></canvas>
+                </div>
+            </div>
+        </section>
+
+        <!-- AI Analysis View -->
+        <section id="analysis" class="view">
+            <h2>AI Market Analysis</h2>
+            
+            <div class="insights-container">
+                <h3>Market Insights</h3>
+                <div id="marketInsights" class="insights-list">
+                    <!-- AI insights will be populated here -->
+                </div>
+            </div>
+
+            <div class="analysis-grid">
+                <div class="analysis-card">
+                    <h3>Price Predictions</h3>
+                    <div id="pricePredictions">
+                        <div class="loader">Loading predictions...</div>
+                    </div>
+                </div>
+
+                <div class="analysis-card">
+                    <h3>Trend Analysis</h3>
+                    <canvas id="analysisTrendChart"></canvas>
+                </div>
+
+                <div class="analysis-card">
+                    <h3>Risk Metrics</h3>
+                    <div id="riskMetrics">
+                        <div class="loader">Calculating risks...</div>
+                    </div>
+                </div>
+
+                <div class="analysis-card">
+                    <h3>Pattern Detection</h3>
+                    <div id="patternDetection">
+                        <div class="loader">Analyzing patterns...</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Trading Signals View -->
+        <section id="signals" class="view">
+            <h2>AI Trading Signals</h2>
+            
+            <div class="signals-header">
+                <p>Real-time trading recommendations powered by machine learning</p>
+                <button id="refreshSignals" class="refresh-btn">🔄 Get Latest Signals</button>
+            </div>
+
+            <div class="signals-grid" id="signalsGrid">
+                <!-- Trading signals will be populated here -->
+            </div>
+
+            <div class="signal-details">
+                <h3>Signal Analysis</h3>
+                <canvas id="signalAnalysisChart"></canvas>
+            </div>
+        </section>
+
+        <!-- Trending View -->
+        <section id="trending" class="view">
+            <h2>Trending Tokens</h2>
+            
+            <div class="trending-header">
+                <p>Discover the hottest Solana tokens based on AI analysis</p>
+            </div>
+
+            <div class="trending-list" id="trendingList">
+                <!-- Trending tokens will be populated here -->
+            </div>
+
+            <div class="correlation-matrix">
+                <h3>Token Correlations</h3>
+                <canvas id="trendingCorrelationChart"></canvas>
+            </div>
+        </section>
+
+        <footer>
+            <p>Powered by NoLimitNodes RPC & Advanced AI Models</p>
+            <p class="disclaimer">Trading cryptocurrencies carries risk. AI predictions are not financial advice.</p>
+        </footer>
+    </div>
+
+    <script src="theme.js?v=1"></script>
+    <script src="app.js?v=7"></script>
+    <script src="dashboard.js?v=7"></script>
+    <script src="charts-fixed.js?v=5"></script>
+</body>
+</html>

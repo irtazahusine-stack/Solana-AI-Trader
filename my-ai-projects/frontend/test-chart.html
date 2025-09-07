@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chart Test</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body {
+            background: #1A1B26;
+            color: white;
+            font-family: Arial, sans-serif;
+            padding: 20px;
+        }
+        .chart-container {
+            width: 600px;
+            height: 400px;
+            margin: 20px auto;
+            background: rgba(42, 43, 56, 0.6);
+            padding: 20px;
+            border-radius: 10px;
+        }
+        canvas {
+            max-width: 100%;
+            height: 350px !important;
+        }
+    </style>
+</head>
+<body>
+    <h1>Chart Test - This Should Work!</h1>
+    
+    <div class="chart-container">
+        <h2>Price Chart</h2>
+        <canvas id="testChart"></canvas>
+    </div>
+    
+    <div id="status"></div>
+    
+    <script>
+        console.log('Starting chart test...');
+        const statusDiv = document.getElementById('status');
+        
+        // Test if Chart.js is loaded
+        if (typeof Chart === 'undefined') {
+            statusDiv.innerHTML = '<p style="color: red;">ERROR: Chart.js not loaded!</p>';
+        } else {
+            statusDiv.innerHTML = '<p style="color: green;">✓ Chart.js loaded successfully</p>';
+            
+            // Create a simple test chart
+            const ctx = document.getElementById('testChart').getContext('2d');
+            const testChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+                    datasets: [{
+                        label: 'Test Data',
+                        data: [12, 19, 3, 5, 2, 3],
+                        borderColor: '#14F195',
+                        backgroundColor: 'rgba(20, 241, 149, 0.1)',
+                        borderWidth: 2,
+                        tension: 0.4,
+                        fill: true
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            grid: { color: 'rgba(255, 255, 255, 0.1)' },
+                            ticks: { color: '#888' }
+                        },
+                        x: {
+                            grid: { color: 'rgba(255, 255, 255, 0.1)' },
+                            ticks: { color: '#888' }
+                        }
+                    }
+                }
+            });
+            
+            statusDiv.innerHTML += '<p style="color: green;">✓ Chart created successfully</p>';
+            
+            // Now test API
+            fetch('http://localhost:8000/market/overview')
+                .then(response => response.json())
+                .then(data => {
+                    statusDiv.innerHTML += '<p style="color: green;">✓ API working: ' + data.tokens.length + ' tokens found</p>';
+                    
+                    // Update chart with real data
+                    const labels = data.tokens.map(t => t.symbol);
+                    const prices = data.tokens.map(t => t.price);
+                    
+                    testChart.data.labels = labels;
+                    testChart.data.datasets[0].label = 'Token Prices';
+                    testChart.data.datasets[0].data = prices;
+                    testChart.update();
+                    
+                    statusDiv.innerHTML += '<p style="color: green;">✓ Chart updated with API data!</p>';
+                })
+                .catch(error => {
+                    statusDiv.innerHTML += '<p style="color: red;">✗ API error: ' + error + '</p>';
+                });
+        }
+    </script>
+</body>
+</html>

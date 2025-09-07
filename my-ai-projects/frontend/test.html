@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Solana AI Trader - Test Page</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #1a1a2e;
+            color: #fff;
+            padding: 20px;
+        }
+        .status { padding: 10px; margin: 10px 0; border-radius: 5px; }
+        .success { background: #28a745; }
+        .error { background: #dc3545; }
+        .info { background: #17a2b8; }
+        #chart-container { width: 80%; margin: 20px auto; }
+        pre { background: #000; padding: 10px; border-radius: 5px; overflow: auto; }
+    </style>
+</head>
+<body>
+    <h1>Solana AI Trader - Connection Test</h1>
+    
+    <div id="status"></div>
+    <div id="data"></div>
+    
+    <div id="chart-container">
+        <canvas id="priceChart"></canvas>
+    </div>
+    
+    <script>
+        const API_BASE_URL = 'http://localhost:8000';
+        const statusDiv = document.getElementById('status');
+        const dataDiv = document.getElementById('data');
+        
+        // Test API connection
+        async function testConnection() {
+            statusDiv.innerHTML = '<div class="status info">Testing API connection...</div>';
+            
+            try {
+                // Test root endpoint
+                const response = await fetch(`${API_BASE_URL}/`);
+                const data = await response.json();
+                statusDiv.innerHTML += '<div class="status success">✓ API Connected: ' + JSON.stringify(data) + '</div>';
+                
+                // Test market overview
+                const marketResponse = await fetch(`${API_BASE_URL}/market/overview`);
+                const marketData = await marketResponse.json();
+                statusDiv.innerHTML += '<div class="status success">✓ Market Data Retrieved</div>';
+                
+                // Display token data
+                dataDiv.innerHTML = '<h2>Market Data:</h2><pre>' + JSON.stringify(marketData, null, 2) + '</pre>';
+                
+                // Create a simple chart
+                if (marketData.tokens && marketData.tokens.length > 0) {
+                    createChart(marketData.tokens);
+                }
+                
+                // Test WebSocket
+                testWebSocket();
+                
+            } catch (error) {
+                statusDiv.innerHTML += '<div class="status error">✗ Error: ' + error.message + '</div>';
+                console.error('Connection error:', error);
+            }
+        }
+        
+        function createChart(tokens) {
+            const ctx = document.getElementById('priceChart').getContext('2d');
+            
+            new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: tokens.map(t => t.symbol),
+                    datasets: [{
+                        label: 'Token Prices (USD)',
+                        data: tokens.map(t => t.price),
+                        backgroundColor: [
+                            'rgba(255, 99, 132, 0.5)',
+                            'rgba(54, 162, 235, 0.5)',
+                            'rgba(255, 206, 86, 0.5)',
+                            'rgba(75, 192, 192, 0.5)',
+                            'rgba(153, 102, 255, 0.5)',
+                            'rgba(255, 159, 64, 0.5)'
+                        ],
+                        borderColor: [
+                            'rgba(255, 99, 132, 1)',
+                            'rgba(54, 162, 235, 1)',
+                            'rgba(255, 206, 86, 1)',
+                            'rgba(75, 192, 192, 1)',
+                            'rgba(153, 102, 255, 1)',
+                            'rgba(255, 159, 64, 1)'
+                        ],
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        title: {
+                            display: true,
+                            text: 'Solana Token Prices',
+                            color: '#fff'
+                        },
+                        legend: {
+                            labels: {
+                                color: '#fff'
+                            }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                color: '#fff'
+                            },
+                            grid: {
+                                color: 'rgba(255, 255, 255, 0.1)'
+                            }
+                        },
+                        x: {
+                            ticks: {
+                                color: '#fff'
+                            },
+                            grid: {
+                                color: 'rgba(255, 255, 255, 0.1)'
+                            }
+                        }
+                    }
+                }
+            });
+            
+            statusDiv.innerHTML += '<div class="status success">✓ Chart Created</div>';
+        }
+        
+        function testWebSocket() {
+            const ws = new WebSocket('ws://localhost:8000/ws');
+            
+            ws.onopen = () => {
+                statusDiv.innerHTML += '<div class="status success">✓ WebSocket Connected</div>';
+            };
+            
+            ws.onmessage = (event) => {
+                const data = JSON.parse(event.data);
+                statusDiv.innerHTML += '<div class="status info">📊 Live Update: ' + data.symbol + ' = $' + data.price.toFixed(4) + '</div>';
+            };
+            
+            ws.onerror = (error) => {
+                statusDiv.innerHTML += '<div class="status error">✗ WebSocket Error</div>';
+            };
+        }
+        
+        // Run test on page load
+        testConnection();
+    </script>
+</body>
+</html>
